@@ -48,12 +48,6 @@ public class GameResource {
     return ResponseEntity.noContent().build();
   }
 
-  @GetMapping("/{id}")
-  public ResponseEntity<GameResponse> retrieveGame(@PathVariable Long id) {
-    Game gameFound = gameService.retrieveGame(id);
-    return ResponseEntity.ok(gameMapper.toResponse(gameFound));
-  }
-
   @PostMapping("/{gameId}/decks/{deckId}")
   public ResponseEntity<Void> addDeckToGame(@PathVariable Long gameId, @PathVariable Long deckId) {
     gameService.addDeckToGame(gameId, deckId);

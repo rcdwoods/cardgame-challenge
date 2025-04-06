@@ -24,10 +24,4 @@ public class DeckResource {
     Deck createdDeck = deckService.createDeck();
     return ResponseEntity.ok(deckMapper.toResponse(createdDeck));
   }
-
-  @GetMapping("/{id}")
-  public ResponseEntity<DeckResponse> retrieveDeck(@PathVariable Long id) {
-    Deck deck = deckService.retrieveDeck(id);
-    return ResponseEntity.ok(deckMapper.toResponse(deck));
-  }
 }

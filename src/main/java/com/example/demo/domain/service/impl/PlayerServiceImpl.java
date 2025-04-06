@@ -22,7 +22,7 @@ public class PlayerServiceImpl implements PlayerService {
   @Override
   public Player createPlayer(Long gameId, Player player) {
     Game gameFound = gameService.retrieveGame(gameId);
-    player.setGame(gameFound);
+    gameFound.addPlayer(player);
 
     return playerRepository.save(player);
   }

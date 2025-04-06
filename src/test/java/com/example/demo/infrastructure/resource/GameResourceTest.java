@@ -222,7 +222,7 @@ class GameResourceTest {
     RestAssured.given().port(testingPort)
       .when()
       .contentType("application/json")
-      .post(String.format("/v1/games/%s/decks/shuffle", createdGameId))
+      .post(String.format("/v1/games/%s/shuffle", createdGameId))
       .then()
       .statusCode(HttpStatus.NO_CONTENT.value());
   }
@@ -461,12 +461,12 @@ class GameResourceTest {
       .then()
       .statusCode(HttpStatus.OK.value())
       .body(
-        "players_amount", Matchers.equalTo(2),
-        "scores", Matchers.hasSize(2),
-        "scores[0].name", Matchers.notNullValue(),
-        "scores[0].score", Matchers.equalTo(name.getNumber()),
-        "scores[1].name", Matchers.notNullValue(),
-        "scores[1].score", Matchers.equalTo(0)
+        "player_amount", Matchers.equalTo(2),
+        "player_scores", Matchers.hasSize(2),
+        "player_scores[0].name", Matchers.notNullValue(),
+        "player_scores[0].score", Matchers.equalTo(name.getNumber()),
+        "player_scores[1].name", Matchers.notNullValue(),
+        "player_scores[1].score", Matchers.equalTo(0)
       );
   }
 }

@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public class PlayerScoresSummaryResponse {
-  @JsonProperty("players_amount")
-  public Long playersAmount;
-  public List<PlayerScoreResponse> scores;
+  @JsonProperty("player_amount")
+  public Long playerAmount;
+  @JsonProperty("player_scores")
+  public List<PlayerScoreResponse> playerScores;
 }

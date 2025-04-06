@@ -15,6 +15,7 @@ import java.util.Set;
 @Mapper
 public interface PlayerMapper {
   Player toEntity(PlayerRequest playerRequest);
+  @Mapping(target = "cardAmount", expression = "java(player.getGameCards().size())")
   @Mapping(target = "score", expression = "java(player.getGameScore())")
   PlayerScoreResponse toScoreResponse(Player player);
   PlayerResponse toResponse(Player player);
@@ -25,8 +26,8 @@ public interface PlayerMapper {
     List<PlayerScoreResponse> playerScores = toScoreResponse(players);
     playerScores.sort(Comparator.comparing((PlayerScoreResponse player) -> player.score).reversed());
 
-    response.playersAmount = (long) players.size();
-    response.scores = playerScores;
+    response.playerAmount = (long) players.size();
+    response.playerScores = playerScores;
 
     return response;
   }

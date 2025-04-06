@@ -1,7 +1,7 @@
 package com.example.demo.domain.entity;
 
-import com.example.demo.domain.exception.GameHasNoDeckToShuffleException;
-import com.example.demo.domain.exception.NoCardsLeftInDeckException;
+import com.example.demo.domain.exception.GameHasNoCardsToShuffle;
+import com.example.demo.domain.exception.NoCardsLeftInGameDeckException;
 import com.example.demo.domain.exception.PlayerAlreadyExistsInTheGameException;
 import jakarta.persistence.*;
 
@@ -68,7 +68,7 @@ public class Game {
   public GameCard dealCard(Player player) {
     List<GameCard> undealtCards = this.deck.getUndealtCards();
     if (undealtCards.isEmpty()) {
-      throw new NoCardsLeftInDeckException(this.id);
+      throw new NoCardsLeftInGameDeckException(this.id);
     }
 
     GameCard card = undealtCards.get(0);
@@ -77,8 +77,8 @@ public class Game {
   }
 
   public void shuffleDeck() {
-    if (Objects.isNull(this.deck)) {
-      throw new GameHasNoDeckToShuffleException(this.id);
+    if (Objects.isNull(this.deck) || this.deck.getCards().isEmpty()) {
+      throw new GameHasNoCardsToShuffle(this.id);
     }
 
     this.deck.shuffle();

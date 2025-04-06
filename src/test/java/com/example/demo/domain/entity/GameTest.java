@@ -1,5 +1,7 @@
 package com.example.demo.domain.entity;
 
+import com.example.demo.domain.exception.GameHasNoCardsToShuffle;
+import com.example.demo.domain.exception.NoCardsLeftInGameDeckException;
 import com.example.demo.domain.exception.PlayerAlreadyExistsInTheGameException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -122,8 +124,8 @@ class GameTest {
     game.addPlayer(player);
 
     Assertions.assertThatThrownBy(() -> game.dealCard(player))
-        .isInstanceOf(com.example.demo.domain.exception.NoCardsLeftInDeckException.class)
-        .hasMessageContaining("No cards left in deck with id");
+        .isInstanceOf(NoCardsLeftInGameDeckException.class)
+        .hasMessage("Game deck with ID null has no cards to deal");
   }
 
   @Test
@@ -138,8 +140,8 @@ class GameTest {
     game.dealCard(player);
 
     Assertions.assertThatThrownBy(() -> game.dealCard(player))
-        .isInstanceOf(com.example.demo.domain.exception.NoCardsLeftInDeckException.class)
-        .hasMessageContaining("No cards left in deck with id");
+        .isInstanceOf(NoCardsLeftInGameDeckException.class)
+        .hasMessage("Game deck with ID null has no cards to deal");
   }
 
   @Test
@@ -170,7 +172,7 @@ class GameTest {
     Game game = new Game();
 
     Assertions.assertThatThrownBy(game::shuffleDeck)
-        .isInstanceOf(com.example.demo.domain.exception.GameHasNoDeckToShuffleException.class)
-        .hasMessage("Game with id null has no deck to shuffle");
+        .isInstanceOf(GameHasNoCardsToShuffle.class)
+        .hasMessage("Game with ID null has no cards to shuffle");
   }
 }

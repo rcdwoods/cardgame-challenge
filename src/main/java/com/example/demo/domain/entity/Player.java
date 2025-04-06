@@ -2,6 +2,7 @@ package com.example.demo.domain.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -21,6 +22,9 @@ public class Player {
 
   @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
   private final List<GameCard> gameCards = new ArrayList<>();
+
+  @Column(name = "created_at")
+  private LocalDateTime createdAt;
 
   public Player() {
   }

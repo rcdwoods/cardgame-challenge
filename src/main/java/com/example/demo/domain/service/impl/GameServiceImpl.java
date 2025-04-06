@@ -80,6 +80,7 @@ public class GameServiceImpl implements GameService {
     }
 
     gameFound.addCards(deckFound.getCards());
+    gameFound.shuffleDeck();
     gameRepository.save(gameFound);
   }
 

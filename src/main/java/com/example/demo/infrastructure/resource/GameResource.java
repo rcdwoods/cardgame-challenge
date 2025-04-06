@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -75,7 +74,7 @@ public class GameResource {
     return ResponseEntity.ok(gameCardMapper.toPlayerCardsResponse(gameCards));
   }
 
-  @PostMapping("/{gameId}/decks/shuffle")
+  @PostMapping("/{gameId}/shuffle")
   public ResponseEntity<Void> shuffleGameDeck(@PathVariable Long gameId) {
     gameService.shuffleGameDeck(gameId);
     return ResponseEntity.noContent().build();

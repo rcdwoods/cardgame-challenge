@@ -9,6 +9,11 @@ import com.example.demo.infrastructure.mapper.CardMapper;
 import com.example.demo.infrastructure.mapper.GameMapper;
 import com.example.demo.infrastructure.mapper.PlayerMapper;
 import com.example.demo.infrastructure.resource.dto.*;
+import com.example.demo.infrastructure.resource.handler.Problem;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,32 +46,64 @@ public class GameResource {
     this.gameMapper = gameMapper;
   }
 
-  @PostMapping
+  @Operation(
+    summary = "Create a new game room",
+    description = "Create a new game room. The game will be created with an empty deck of cards."
+  )
+  @ApiResponse(responseCode = "200", description = "Game room created successfully")
+  @PostMapping(produces = "application/json")
   public ResponseEntity<GameResponse> startGame() {
     Game startedGame = gameService.startNewGame();
     return ResponseEntity.ok(gameMapper.toResponse(startedGame));
   }
 
+  @Operation(
+    summary = "Delete a game",
+    description = "Deletes a game by its ID. This action is irreversible and will remove all associated data."
+  )
+  @ApiResponse(responseCode = "204", description = "Game deleted successfully")
+  @ApiResponse(responseCode = "404", description = "Game Not Found", content = {@Content(schema = @Schema(implementation = Problem.class))})
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteGame(@PathVariable Long id) {
     gameService.removeGame(id);
     return ResponseEntity.noContent().build();
   }
 
-  @PostMapping("/{gameId}/decks/{deckId}")
+  @Operation(
+    summary = "Add a deck to a game",
+    description = "Adds a deck to an existing game. The deck must be created first, and all its cards will be added to the game deck."
+  )
+  @ApiResponse(responseCode = "204", description = "Deck added successfully")
+  @ApiResponse(responseCode = "400", description = "Deck already in use", content = {@Content(schema = @Schema(implementation = Problem.class))})
+  @ApiResponse(responseCode = "404", description = "Game or Deck Not Found", content = {@Content(schema = @Schema(implementation = Problem.class))})
+  @PostMapping(value = "/{gameId}/decks/{deckId}", produces = "application/json")
   public ResponseEntity<Void> addDeckToGame(@PathVariable Long gameId, @PathVariable Long deckId) {
     gameService.addDeckToGame(gameId, deckId);
     return ResponseEntity.noContent().build();
   }
 
-  @PostMapping("/{gameId}/players")
+  @Operation(
+    summary = "Add a player to a game",
+    description = "Adds a player to an existing game. The player will be created and associated with the game."
+  )
+  @ApiResponse(responseCode = "200", description = "Player added successfully")
+  @ApiResponse(responseCode = "400", description = "Player already exists in the game", content = {@Content(schema = @Schema(implementation = Problem.class))})
+  @ApiResponse(responseCode = "404", description = "Game Not Found", content = {@Content(schema = @Schema(implementation = Problem.class))})
+  @PostMapping(value = "/{gameId}/players", produces = "application/json", consumes = "application/json")
   public ResponseEntity<PlayerResponse> addPlayerToGame(@PathVariable Long gameId, @Valid @RequestBody PlayerRequest player) {
     Player playerEntity = playerMapper.toEntity(player);
     Player createdPlayer = playerService.createPlayer(gameId, playerEntity);
     return ResponseEntity.status(HttpStatus.CREATED).body(playerMapper.toResponse(createdPlayer));
   }
 
-  @GetMapping("/{gameId}/players/{playerId}/cards")
+  @Operation(
+    summary = "Retrieve cards of a player in a game",
+    description = "Retrieves the cards of a specific player in a game. The player must be part of the game."
+  )
+  @ApiResponse(responseCode = "200", description = "Player cards retrieved successfully")
+  @ApiResponse(responseCode = "400", description = "Player is not part of the game", content = {@Content(schema = @Schema(implementation = Problem.class))})
+  @ApiResponse(responseCode = "404", description = "Game or Player Not Found", content = {@Content(schema = @Schema(implementation = Problem.class))})
+  @GetMapping(value = "/{gameId}/players/{playerId}/cards", produces = "application/json")
   public ResponseEntity<PlayerCardsResponse> retrievePlayerGameCards(
       @PathVariable Long gameId,
       @PathVariable Long playerId
@@ -75,26 +112,54 @@ public class GameResource {
     return ResponseEntity.ok(gameCardMapper.toPlayerCardsResponse(gameCards));
   }
 
-  @PostMapping("/{gameId}/shuffle")
+  @Operation(
+    summary = "Perform a shuffle on the game deck",
+    description = "Shuffles the deck of cards in a game. This action will randomize the order of the cards in the game deck."
+  )
+  @ApiResponse(responseCode = "204", description = "Deck shuffled successfully")
+  @ApiResponse(responseCode = "404", description = "Game Not Found", content = {@Content(schema = @Schema(implementation = Problem.class))})
+  @PostMapping(value = "/{gameId}/shuffle", produces = "application/json")
   public ResponseEntity<Void> shuffleGameDeck(@PathVariable Long gameId) {
     gameService.shuffleGameDeck(gameId);
     return ResponseEntity.noContent().build();
   }
 
-  @PostMapping("/{gameId}/players/{playerId}/cards-dealing")
+  @Operation(
+    summary = "Deal a card to a player",
+    description = "Deals a card to a specific player in a game. The player must be part of the game, and the game must have " +
+      "cards available to deal. The dealt card will be removed from available cards in the game deck."
+  )
+  @ApiResponse(responseCode = "200", description = "Card dealt successfully")
+  @ApiResponse(responseCode = "400", description = "No cards available for dealing", content = {@Content(schema = @Schema(implementation = Problem.class))})
+  @ApiResponse(responseCode = "404", description = "Game or Player Not Found", content = {@Content(schema = @Schema(implementation = Problem.class))})
+  @PostMapping(value = "/{gameId}/players/{playerId}/cards-dealing", produces = "application/json")
   public ResponseEntity<GameCardResponse> dealCardToPlayer(@PathVariable Long gameId, @PathVariable Long playerId) {
     GameCard dealtCard = gameService.dealCard(gameId, playerId);
     return ResponseEntity.ok(gameCardMapper.toResponse(dealtCard));
   }
 
-  @GetMapping("/{gameId}/undealt-cards-summary")
+  @Operation(
+    summary = "Retrieve a summary of undealt cards by suit",
+    description = "Retrieves a summary of undealt cards by suit in a game. This will show the number of cards available " +
+      "for each suit in the game deck."
+  )
+  @ApiResponse(responseCode = "200", description = "Player scores retrieved successfully")
+  @ApiResponse(responseCode = "404", description = "Game Not Found", content = {@Content(schema = @Schema(implementation = Problem.class))})
+  @GetMapping(value = "/{gameId}/undealt-cards-summary", produces = "application/json")
   public ResponseEntity<UndealtCardSuitSummaryResponse> retrieveUndealtCards(@PathVariable Long gameId) {
     Game gameFound = gameService.retrieveGame(gameId);
     UndealtCardSuitSummaryResponse cardsSummary = new UndealtCardSuitSummaryResponse(gameFound.getDeck().getUndealtCardsAmountBySuit());
     return ResponseEntity.ok(cardsSummary);
   }
 
-  @GetMapping("/{gameId}/undealt-cards")
+  @Operation(
+    summary = "Retrieve a summary of undealt cards",
+    description = "Retrieves a summary of undealt cards in a game. This will show the number of cards available " +
+      "for each card type (face value and suit) in the game deck."
+  )
+  @ApiResponse(responseCode = "200", description = "Player scores retrieved successfully")
+  @ApiResponse(responseCode = "404", description = "Game Not Found", content = {@Content(schema = @Schema(implementation = Problem.class))})
+  @GetMapping(value = "/{gameId}/undealt-cards", produces = "application/json")
   public ResponseEntity<UndealtCardsSummaryResponse> retrieveRemainingCards(@PathVariable Long gameId) {
     Game gameFound = gameService.retrieveGame(gameId);
     Map<GameCard, Integer> remainingCards = gameFound.getDeck().getUndealtCardsAmountByCardType();
@@ -103,7 +168,14 @@ public class GameResource {
     return ResponseEntity.ok(undealtCardsSummary);
   }
 
-  @GetMapping("/{gameId}/scores")
+  @Operation(
+    summary = "Retrieve a summary of player scores",
+    description = "Retrieves a summary of player scores in a game. This will show the players amount, " +
+      "the amount of cards each player has, and the total score of each player."
+  )
+  @ApiResponse(responseCode = "200", description = "Player scores retrieved successfully")
+  @ApiResponse(responseCode = "404", description = "Game Not Found", content = {@Content(schema = @Schema(implementation = Problem.class))})
+  @GetMapping(value = "/{gameId}/scores", produces = "application/json")
   public ResponseEntity<PlayerScoresSummaryResponse> retrieveGameScores(@PathVariable Long gameId) {
     Game gameFound = gameService.retrieveGame(gameId);
     PlayerScoresSummaryResponse playerScores = playerMapper.toSummaryResponse(gameFound.getPlayers());

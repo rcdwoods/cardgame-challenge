@@ -12,7 +12,6 @@ public interface GameService {
   void shuffleGameDeck(Long gameId);
   Game retrieveGame(Long gameId);
   void addDeckToGame(Long gameId, Long deckId);
-  void addPlayerToGame(Long gameId, Player player);
   GameCard dealCard(Long gameId, Long playerId);
   List<GameCard> retrievePlayerGameCards(Long gameId, Long playerId);
 }

@@ -54,13 +54,6 @@ public class GameServiceImpl implements GameService {
     gameRepository.deleteById(gameId);
   }
 
-  @Transactional
-  public void addPlayerToGame(Long gameId, Player player) {
-    Game gameFound = retrieveGame(gameId);
-    gameFound.addPlayer(player);
-    gameRepository.save(gameFound);
-  }
-
   @Override
   @Transactional
   public void shuffleGameDeck(Long gameId) {

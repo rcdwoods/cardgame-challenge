@@ -69,26 +69,6 @@ class GameServiceTest {
   }
 
   @Test
-  void mustAddPlayerToGameWhenGameExists() {
-    Game game = new Game();
-    Mockito.when(gameRepository.findById(1L)).thenReturn(java.util.Optional.of(game));
-    Mockito.when(gameRepository.save(Mockito.any())).thenAnswer(params -> params.getArguments()[0]);
-
-    gameService.addPlayerToGame(1L, new Player("richard"));
-
-    Mockito.verify(gameRepository, Mockito.times(1)).save(game);
-  }
-
-  @Test
-  void mustThrowExceptionWhenAddingPlayerToGameThatDoesNotExists() {
-    Mockito.when(gameRepository.findById(1L)).thenReturn(java.util.Optional.empty());
-
-    Assertions.assertThatThrownBy(() -> gameService.addPlayerToGame(1L, new Player("richard")))
-      .isInstanceOf(GameNotFoundException.class)
-      .hasMessage("Game not found with id 1.");
-  }
-
-  @Test
   void mustShuffleGameDeck() {
     GameDeck gameDeck = new GameDeck();
     Game game = new Game(gameDeck);

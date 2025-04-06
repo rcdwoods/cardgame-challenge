@@ -1,8 +1,6 @@
 package com.example.demo.domain.entity;
 
-import com.example.demo.domain.exception.BusinessException;
-
-import java.util.Map;
+import com.example.demo.domain.exception.InvalidCardNumberException;
 
 public enum CardName {
   ACE(1),
@@ -32,7 +30,7 @@ public enum CardName {
       }
     }
 
-    throw new BusinessException(String.format("Invalid card number: %d", number), "INVALID_CARD_NUMBER");
+    throw new InvalidCardNumberException(number);
   }
 
   public Integer getNumber() {

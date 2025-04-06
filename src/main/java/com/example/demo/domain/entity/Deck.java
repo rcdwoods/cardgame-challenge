@@ -14,9 +14,6 @@ public class Deck {
   @OneToMany(mappedBy = "deck", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Card> cards = new ArrayList<>();
 
-  public Deck() {
-  }
-
   public Long getId() {
     return id;
   }

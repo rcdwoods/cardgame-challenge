@@ -22,10 +22,6 @@ public class Card {
   @JoinColumn(name = "deck_id", nullable = false)
   private Deck deck;
 
-  @ManyToOne
-  @JoinColumn(name = "game_deck_id")
-  private GameDeck gameDeck;
-
   public Card() {
   }
 
@@ -62,9 +58,5 @@ public class Card {
   @Override
   public int hashCode() {
     return Objects.hash(name, suit);
-  }
-
-  public GameDeck getGameDeck() {
-    return gameDeck;
   }
 }

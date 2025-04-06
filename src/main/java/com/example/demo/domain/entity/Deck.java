@@ -14,10 +14,6 @@ public class Deck {
   @OneToMany(mappedBy = "deck", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Card> cards = new ArrayList<>();
 
-  @ManyToOne
-  @JoinColumn(name = "game_id")
-  private Game game;
-
   public Deck() {
   }
 
@@ -31,9 +27,5 @@ public class Deck {
 
   public void setCards(List<Card> cards) {
     this.cards = cards;
-  }
-
-  public Game getGame() {
-    return game;
   }
 }

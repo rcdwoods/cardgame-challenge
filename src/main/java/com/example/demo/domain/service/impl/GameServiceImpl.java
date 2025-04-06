@@ -1,6 +1,7 @@
 package com.example.demo.domain.service.impl;
 
 import com.example.demo.domain.entity.*;
+import com.example.demo.domain.exception.DeckAlreadyInUseException;
 import com.example.demo.domain.exception.GameNotFoundException;
 import com.example.demo.domain.exception.PlayerIsNotInTheGameException;
 import com.example.demo.domain.service.DeckService;
@@ -76,6 +77,10 @@ public class GameServiceImpl implements GameService {
   public void addDeckToGame(Long gameId, Long deckId) {
     Game gameFound = retrieveGame(gameId);
     Deck deckFound = deckService.retrieveDeck(deckId);
+
+    if (gameCardRepository.someCardIsBeingUsedByDeck(deckFound.getId())) {
+      throw new DeckAlreadyInUseException(deckId);
+    }
 
     gameFound.addCards(deckFound.getCards());
     gameRepository.save(gameFound);

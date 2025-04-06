@@ -2,6 +2,7 @@ package com.example.demo.domain.entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,7 +20,7 @@ public class Player {
   private Game game;
 
   @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<GameCard> gameCards;
+  private final List<GameCard> gameCards = new ArrayList<>();
 
   public Player() {
   }
@@ -50,6 +51,11 @@ public class Player {
 
   public List<GameCard> getGameCards() {
     return gameCards;
+  }
+
+  public void addCard(GameCard gameCard) {
+    this.gameCards.add(gameCard);
+    gameCard.setOwner(this);
   }
 
   @Override

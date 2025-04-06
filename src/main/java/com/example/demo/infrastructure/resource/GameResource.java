@@ -98,7 +98,7 @@ public class GameResource {
   @GetMapping("/{gameId}/remaining-cards")
   public ResponseEntity<List<GameCardCounterResponse>> retrieveRemainingCards(@PathVariable Long gameId) {
     Game gameFound = gameService.retrieveGame(gameId);
-    Map<GameCard, Integer> remainingCards = gameFound.getDeck().getRemainingCards();
+    Map<GameCard, Integer> remainingCards = gameFound.getDeck().getUndealtCardsAmountByCardType();
     List<GameCardCounterResponse> remainingCardsResponse = gameCardMapper.toCounterResponse(remainingCards);
     remainingCardsResponse.sort(Comparator.comparing((GameCardCounterResponse card) -> card.suit)
       .thenComparing(card -> card.name.getNumber()).reversed());

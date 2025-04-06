@@ -6,6 +6,7 @@ import com.example.demo.domain.exception.PlayerAlreadyExistsInTheGameException;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -21,7 +22,7 @@ public class Game {
   private GameDeck deck;
 
   @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<Player> players;
+  private final Set<Player> players = new HashSet<>();
 
   @Column(name = "created_at")
   private LocalDateTime createdAt;
@@ -71,7 +72,7 @@ public class Game {
     }
 
     GameCard card = undealtCards.get(0);
-    card.setOwner(player);
+    player.addCard(card);
     return card;
   }
 

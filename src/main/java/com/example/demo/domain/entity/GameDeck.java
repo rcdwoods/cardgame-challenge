@@ -65,7 +65,14 @@ public class GameDeck {
   }
 
   public Map<CardSuit, Integer> getUndealtCardsAmountBySuit() {
-    Map<CardSuit, Integer> undealtCardsBySuit = new HashMap<>();
+    Map<CardSuit, Integer> undealtCardsBySuit = new HashMap<>(
+        Map.of(
+            CardSuit.HEARTS, 0,
+            CardSuit.DIAMONDS, 0,
+            CardSuit.CLUBS, 0,
+            CardSuit.SPADES, 0
+        )
+    );
 
     for (GameCard gameCard : getUndealtCards()) {
       CardSuit suit = gameCard.getCard().getSuit();
@@ -76,7 +83,7 @@ public class GameDeck {
     return undealtCardsBySuit;
   }
 
-  public Map<GameCard, Integer> getRemainingCards() {
+  public Map<GameCard, Integer> getUndealtCardsAmountByCardType() {
     Map<GameCard, Integer> remainingCards = new HashMap<>();
 
     for (GameCard gameCard : cards) {

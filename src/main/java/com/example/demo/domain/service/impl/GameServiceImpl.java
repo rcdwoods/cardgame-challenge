@@ -9,6 +9,7 @@ import com.example.demo.domain.service.GameService;
 import com.example.demo.infrastructure.repository.GameCardRepository;
 import com.example.demo.infrastructure.repository.GameDeckRepository;
 import com.example.demo.infrastructure.repository.GameRepository;
+import com.example.demo.infrastructure.repository.PlayerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,17 +20,20 @@ public class GameServiceImpl implements GameService {
 
   private final GameDeckRepository gameDeckRepository;
   private final GameCardRepository gameCardRepository;
+  private final PlayerRepository playerRepository;
   private final GameRepository gameRepository;
   private final DeckService deckService;
 
   public GameServiceImpl(
     GameDeckRepository gameDeckRepository,
     GameCardRepository gameCardRepository,
+    PlayerRepository playerRepository,
     GameRepository gameRepository,
     DeckService deckService
   ) {
     this.gameCardRepository = gameCardRepository;
     this.gameDeckRepository = gameDeckRepository;
+    this.playerRepository = playerRepository;
     this.gameRepository = gameRepository;
     this.deckService = deckService;
   }
@@ -88,10 +92,7 @@ public class GameServiceImpl implements GameService {
 
   public List<GameCard> retrievePlayerGameCards(Long gameId, Long playerId) {
     Game gameFound = retrieveGame(gameId);
-    Player playerFound = gameFound.getPlayers().stream()
-        .filter(player -> player.getId().equals(playerId))
-        .findFirst()
-        .orElseThrow(() -> new PlayerIsNotInTheGameException(playerId));
+    Player playerFound = retrievePlayerFromGame(playerId, gameId);
 
     return gameCardRepository.findAllByGameDeckIdAndOwnerId(gameFound.getDeck().getId(), playerFound.getId());
   }
@@ -99,15 +100,17 @@ public class GameServiceImpl implements GameService {
   @Override
   public GameCard dealCard(Long gameId, Long playerId) {
     Game gameFound = retrieveGame(gameId);
-    Player playerFound = gameFound.getPlayers().stream()
-      .filter(player -> player.getId().equals(playerId))
-      .findFirst()
-      .orElseThrow(() -> new PlayerIsNotInTheGameException(playerId));
+    Player playerFound = retrievePlayerFromGame(playerId, gameId);
 
     GameCard dealtCard = gameFound.dealCard(playerFound);
     gameRepository.save(gameFound);
 
     return dealtCard;
+  }
+
+  private Player retrievePlayerFromGame(Long playerId, Long gameId) {
+    return playerRepository.findByIdAndGameId(playerId, gameId)
+        .orElseThrow(() -> new PlayerIsNotInTheGameException(playerId));
   }
 
   private void validateGameExists(Long gameId) {

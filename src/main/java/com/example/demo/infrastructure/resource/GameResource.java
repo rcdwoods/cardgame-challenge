@@ -9,6 +9,7 @@ import com.example.demo.infrastructure.mapper.CardMapper;
 import com.example.demo.infrastructure.mapper.GameMapper;
 import com.example.demo.infrastructure.mapper.PlayerMapper;
 import com.example.demo.infrastructure.resource.dto.*;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,7 +60,7 @@ public class GameResource {
   }
 
   @PostMapping("/{gameId}/players")
-  public ResponseEntity<PlayerResponse> addPlayerToGame(@PathVariable Long gameId, @RequestBody PlayerRequest player) {
+  public ResponseEntity<PlayerResponse> addPlayerToGame(@PathVariable Long gameId, @Valid @RequestBody PlayerRequest player) {
     Player playerEntity = playerMapper.toEntity(player);
     Player createdPlayer = playerService.createPlayer(gameId, playerEntity);
     return ResponseEntity.status(HttpStatus.CREATED).body(playerMapper.toResponse(createdPlayer));

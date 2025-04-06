@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @JsonInclude(Include.NON_NULL)
 public class Problem {
@@ -13,7 +14,8 @@ public class Problem {
   private String detail;
   private String userMessage;
   private String code;
-  private OffsetDateTime timestamp;
+  private List<Object> objects;
+  private final OffsetDateTime timestamp;
 
   public Problem() {
     this.timestamp = OffsetDateTime.now();
@@ -77,6 +79,11 @@ public class Problem {
     return this;
   }
 
+  public Problem withObjects(List<Object> objects) {
+    this.objects = objects;
+    return this;
+  }
+
   public static class Object {
     private final String name;
     private final String userMessage;
@@ -93,5 +100,9 @@ public class Problem {
     public String getUserMessage() {
       return userMessage;
     }
+  }
+
+  public List<Object> getObjects() {
+    return objects;
   }
 }

@@ -36,7 +36,7 @@ class GameResourceTest {
       .when()
       .post("/v1/games")
       .then()
-      .statusCode(HttpStatus.OK.value())
+      .statusCode(HttpStatus.CREATED.value())
       .body(
         "id", Matchers.notNullValue(),
         "created_at", Matchers.startsWith(date),
@@ -52,7 +52,7 @@ class GameResourceTest {
       .when()
       .post("/v1/games")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdGameId = creationResponse.extract().response().path("id");
 
@@ -71,7 +71,7 @@ class GameResourceTest {
       .when()
       .post("/v1/games")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdGameId = gameCreationResponse.extract().response().path("id");
 
@@ -80,7 +80,7 @@ class GameResourceTest {
       .when()
       .post("/v1/decks")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdDeckId = deckCreationResponse.extract().response().path("id");
 
@@ -99,7 +99,7 @@ class GameResourceTest {
       .when()
       .post("/v1/games")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdGameId = gameCreationResponse.extract().response().path("id");
 
@@ -121,7 +121,7 @@ class GameResourceTest {
       .contentType("application/json")
       .post("/v1/games")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdGameId = gameCreationResponse.extract().response().path("id");
 
@@ -163,7 +163,7 @@ class GameResourceTest {
       .contentType("application/json")
       .post("/v1/games")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdGameId = gameCreationResponse.extract().response().path("id");
 
@@ -194,7 +194,7 @@ class GameResourceTest {
       .contentType("application/json")
       .post("/v1/games")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdGameId = gameCreationResponse.extract().response().path("id");
 
@@ -215,7 +215,7 @@ class GameResourceTest {
       .when()
       .post("/v1/decks")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdDeckId = deckCreationResponse.extract().response().path("id");
 
@@ -257,7 +257,7 @@ class GameResourceTest {
       .contentType("application/json")
       .post("/v1/games")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdGameId = gameCreationResponse.extract().response().path("id");
 
@@ -266,7 +266,7 @@ class GameResourceTest {
       .when()
       .post("/v1/decks")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdDeckId = deckCreationResponse.extract().response().path("id");
 
@@ -292,7 +292,7 @@ class GameResourceTest {
       .when()
       .post("/v1/games")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdGameId = gameCreationResponse.extract().response().path("id");
 
@@ -301,7 +301,7 @@ class GameResourceTest {
       .when()
       .post("/v1/decks")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdDeckId = deckCreationResponse.extract().response().path("id");
 
@@ -333,7 +333,7 @@ class GameResourceTest {
       .when()
       .post("/v1/games")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdGameId = gameCreationResponse.extract().response().path("id");
 
@@ -342,7 +342,7 @@ class GameResourceTest {
       .when()
       .post("/v1/decks")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdDeckId = deckCreationResponse.extract().response().path("id");
 
@@ -424,7 +424,7 @@ class GameResourceTest {
       .when()
       .post("/v1/games")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdGameId = gameCreationResponse.extract().response().path("id");
 
@@ -433,7 +433,7 @@ class GameResourceTest {
       .when()
       .post("/v1/decks")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdDeckId = deckCreationResponse.extract().response().path("id");
 
@@ -466,7 +466,7 @@ class GameResourceTest {
       .when()
       .post("/v1/games")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdGameId = gameCreationResponse.extract().response().path("id");
 
@@ -477,7 +477,7 @@ class GameResourceTest {
       .when()
       .post("/v1/decks")
       .then()
-      .statusCode(HttpStatus.OK.value());
+      .statusCode(HttpStatus.CREATED.value());
 
     Integer createdDeckId = deckCreationResponse.extract().response().path("id");
 

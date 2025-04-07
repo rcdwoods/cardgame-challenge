@@ -50,11 +50,11 @@ public class GameResource {
     summary = "Create a new game room",
     description = "Create a new game room. The game will be created with an empty deck of cards."
   )
-  @ApiResponse(responseCode = "200", description = "Game room created successfully")
+  @ApiResponse(responseCode = "201", description = "Game room created successfully")
   @PostMapping(produces = "application/json")
   public ResponseEntity<GameResponse> startGame() {
     Game startedGame = gameService.startNewGame();
-    return ResponseEntity.ok(gameMapper.toResponse(startedGame));
+    return ResponseEntity.status(HttpStatus.CREATED).body(gameMapper.toResponse(startedGame));
   }
 
   @Operation(

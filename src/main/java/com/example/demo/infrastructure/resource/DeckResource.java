@@ -6,6 +6,7 @@ import com.example.demo.infrastructure.mapper.DeckMapper;
 import com.example.demo.infrastructure.resource.dto.DeckResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,10 +26,10 @@ public class DeckResource {
     summary = "Create a new deck",
     description = "Creates a new deck and returns its details. This deck can be attached to a game after creation."
   )
-  @ApiResponse(responseCode = "200", description = "Deck created successfully")
+  @ApiResponse(responseCode = "201", description = "Deck created successfully")
   @PostMapping(produces = "application/json")
   public ResponseEntity<DeckResponse> createDeck() {
     Deck createdDeck = deckService.createDeck();
-    return ResponseEntity.ok(deckMapper.toResponse(createdDeck));
+    return ResponseEntity.status(HttpStatus.CREATED).body(deckMapper.toResponse(createdDeck));
   }
 }

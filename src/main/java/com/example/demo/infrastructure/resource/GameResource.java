@@ -97,6 +97,19 @@ public class GameResource {
   }
 
   @Operation(
+    summary = "Remove a player from a game",
+    description = "Removes a player from an existing game. The player will no longer be associated with the game."
+  )
+  @ApiResponse(responseCode = "204", description = "Player removed successfully")
+  @ApiResponse(responseCode = "400", description = "Player is not part of the game", content = {@Content(schema = @Schema(implementation = Problem.class))})
+  @ApiResponse(responseCode = "404", description = "Game or Player Not Found", content = {@Content(schema = @Schema(implementation = Problem.class))})
+  @DeleteMapping(value = "/{gameId}/players/{playerId}", produces = "application/json")
+  public ResponseEntity<Void> removePlayerFromGame(@PathVariable Long gameId, @PathVariable Long playerId) {
+    playerService.removePlayer(gameId, playerId);
+    return ResponseEntity.noContent().build();
+  }
+
+  @Operation(
     summary = "Retrieve cards of a player in a game",
     description = "Retrieves the cards of a specific player in a game. The player must be part of the game."
   )

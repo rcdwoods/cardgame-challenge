@@ -3,6 +3,7 @@ package com.example.demo.infrastructure.resource;
 import com.example.demo.domain.entity.CardName;
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
+import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -112,6 +113,48 @@ class GameResourceTest {
       .post(String.format("/v1/games/%s/players", createdGameId))
       .then()
       .statusCode(HttpStatus.CREATED.value());
+  }
+
+  @Test
+  void mustRemovePlayerFromGame() {
+    ValidatableResponse gameCreationResponse = RestAssured.given()
+      .when()
+      .contentType("application/json")
+      .post("/v1/games")
+      .then()
+      .statusCode(HttpStatus.OK.value());
+
+    Integer createdGameId = gameCreationResponse.extract().response().path("id");
+
+    String playerRequest = "{\"name\" : \"richard\"}";
+
+    ValidatableResponse playerCreationResponse = RestAssured.given()
+      .body(playerRequest)
+      .contentType("application/json")
+      .when()
+      .post(String.format("/v1/games/%s/players", createdGameId))
+      .then()
+      .statusCode(HttpStatus.CREATED.value());
+
+    Integer createdPlayerId = playerCreationResponse.extract().response().path("id");
+
+    RestAssured.given()
+      .contentType("application/json")
+      .when()
+      .delete(String.format("/v1/games/%s/players/%s", createdGameId, createdPlayerId))
+      .then()
+      .statusCode(HttpStatus.NO_CONTENT.value());
+
+    ValidatableResponse playerCardsResponse = RestAssured.given()
+      .contentType("application/json")
+      .when()
+      .get(String.format("/v1/games/%s/players/%s/cards", createdGameId, createdPlayerId))
+      .then()
+      .statusCode(HttpStatus.BAD_REQUEST.value());
+
+    String errorMessage = playerCardsResponse.extract().response().path("userMessage");
+
+    Assertions.assertThat(errorMessage).isEqualTo(String.format("Player with ID %s is not in the game.", createdPlayerId));
   }
 
   @Test

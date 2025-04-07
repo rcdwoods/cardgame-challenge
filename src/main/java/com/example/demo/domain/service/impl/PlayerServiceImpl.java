@@ -1,6 +1,7 @@
 package com.example.demo.domain.service.impl;
 
 import com.example.demo.domain.entity.*;
+import com.example.demo.domain.exception.PlayerIsNotInTheGameException;
 import com.example.demo.domain.service.GameService;
 import com.example.demo.domain.service.PlayerService;
 import com.example.demo.infrastructure.repository.PlayerRepository;
@@ -25,5 +26,15 @@ public class PlayerServiceImpl implements PlayerService {
     gameFound.addPlayer(player);
 
     return playerRepository.save(player);
+  }
+
+  @Override
+  @Transactional
+  public void removePlayer(Long gameId, Long playerId) {
+    if (!playerRepository.existsByIdAndGameId(playerId, gameId)) {
+      throw new PlayerIsNotInTheGameException(playerId);
+    }
+
+    playerRepository.deleteByIdAndGameId(playerId, gameId);
   }
 }

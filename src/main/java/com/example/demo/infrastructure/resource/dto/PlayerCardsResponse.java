@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerCardsResponse {
-  @JsonProperty("cards_amount")
-  public int cardsAmount;
+  @JsonProperty("card_amount")
+  public int cardAmount;
   public List<GameCardResponse> cards = new ArrayList<>();
 }

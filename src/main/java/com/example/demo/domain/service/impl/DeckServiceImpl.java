@@ -1,7 +1,7 @@
 package com.example.demo.domain.service.impl;
 
 import com.example.demo.domain.entity.Card;
-import com.example.demo.domain.entity.CardName;
+import com.example.demo.domain.entity.CardValue;
 import com.example.demo.domain.entity.CardSuit;
 import com.example.demo.domain.entity.Deck;
 import com.example.demo.domain.exception.DeckNotFoundException;
@@ -41,7 +41,7 @@ public class DeckServiceImpl implements DeckService {
 
     for (CardSuit suit : CardSuit.values()) {
       for (int i = 1; i <= 13; i++) {
-        cards.add(new Card(CardName.fromNumber(i), suit, deck));
+        cards.add(new Card(CardValue.fromNumber(i), suit, deck));
       }
     }
 

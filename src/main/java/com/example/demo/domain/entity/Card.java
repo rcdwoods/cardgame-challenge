@@ -10,9 +10,9 @@ public class Card {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false)
+  @Column(name = "`value`", nullable = false)
   @Enumerated(EnumType.STRING)
-  private CardName name;
+  private CardValue value;
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
@@ -25,8 +25,8 @@ public class Card {
   public Card() {
   }
 
-  public Card(CardName name, CardSuit cardSuit, Deck deck) {
-    this.name = name;
+  public Card(CardValue value, CardSuit cardSuit, Deck deck) {
+    this.value = value;
     this.suit = cardSuit;
     this.deck = deck;
   }
@@ -35,8 +35,8 @@ public class Card {
     return id;
   }
 
-  public CardName getName() {
-    return name;
+  public CardValue getValue() {
+    return value;
   }
 
   public CardSuit getSuit() {
@@ -52,11 +52,11 @@ public class Card {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Card card = (Card) o;
-    return name == card.name && suit == card.suit;
+    return value == card.value && suit == card.suit;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, suit);
+    return Objects.hash(value, suit);
   }
 }

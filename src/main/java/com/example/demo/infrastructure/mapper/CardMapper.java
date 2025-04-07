@@ -15,14 +15,14 @@ import java.util.Map;
 
 @Mapper
 public interface CardMapper {
-  @Mapping(source = "card.name", target = "name")
+  @Mapping(source = "card.value", target = "value")
   @Mapping(source = "card.suit", target = "suit")
   GameCardResponse toResponse(GameCard gameCard);
   List<GameCardResponse> toResponse(List<GameCard> gameCards);
 
   default PlayerCardsResponse toPlayerCardsResponse(List<GameCard> gameCards) {
     PlayerCardsResponse response = new PlayerCardsResponse();
-    response.cardsAmount = gameCards.size();
+    response.cardAmount = gameCards.size();
     response.cards = toResponse(gameCards);;
     return response;
   }
@@ -37,9 +37,9 @@ public interface CardMapper {
       cards.add(toUndealtCardSummaryResponse(gameCard, count));
     }
 
-    cards.sort(Comparator.comparing((UndealtCardResponse card) -> card.suit).thenComparing(card -> card.name.getNumber()).reversed());
+    cards.sort(Comparator.comparing((UndealtCardResponse card) -> card.suit).thenComparing(card -> card.value.getNumber()).reversed());
 
-    summaryResponse.cardsAmount = cards.size();
+    summaryResponse.undealtCardsAmount = cards.stream().mapToInt(undealtCardResponse -> undealtCardResponse.count).sum();
     summaryResponse.cards = cards;
 
     return summaryResponse;
@@ -47,7 +47,7 @@ public interface CardMapper {
 
   default UndealtCardResponse toUndealtCardSummaryResponse(GameCard gameCard, Integer count) {
     UndealtCardResponse response = new UndealtCardResponse();
-    response.name = gameCard.getCard().getName();
+    response.value = gameCard.getCard().getValue();
     response.suit = gameCard.getCard().getSuit();
     response.count = count;
     return response;

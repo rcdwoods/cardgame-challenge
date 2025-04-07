@@ -7,7 +7,6 @@ import com.example.demo.domain.exception.PlayerIsNotInTheGameException;
 import com.example.demo.domain.service.DeckService;
 import com.example.demo.domain.service.GameService;
 import com.example.demo.infrastructure.repository.GameCardRepository;
-import com.example.demo.infrastructure.repository.GameDeckRepository;
 import com.example.demo.infrastructure.repository.GameRepository;
 import com.example.demo.infrastructure.repository.PlayerRepository;
 import org.springframework.stereotype.Service;
@@ -18,21 +17,18 @@ import java.util.List;
 @Service
 public class GameServiceImpl implements GameService {
 
-  private final GameDeckRepository gameDeckRepository;
   private final GameCardRepository gameCardRepository;
   private final PlayerRepository playerRepository;
   private final GameRepository gameRepository;
   private final DeckService deckService;
 
   public GameServiceImpl(
-    GameDeckRepository gameDeckRepository,
     GameCardRepository gameCardRepository,
     PlayerRepository playerRepository,
     GameRepository gameRepository,
     DeckService deckService
   ) {
     this.gameCardRepository = gameCardRepository;
-    this.gameDeckRepository = gameDeckRepository;
     this.playerRepository = playerRepository;
     this.gameRepository = gameRepository;
     this.deckService = deckService;
@@ -41,10 +37,7 @@ public class GameServiceImpl implements GameService {
   @Override
   @Transactional
   public Game startNewGame() {
-    GameDeck createdGameDeck = gameDeckRepository.save(new GameDeck());
-    Game startedGame = new Game(createdGameDeck);
-
-    return gameRepository.save(startedGame);
+    return gameRepository.save(new Game());
   }
 
   @Override
@@ -88,7 +81,7 @@ public class GameServiceImpl implements GameService {
     Game gameFound = retrieveGame(gameId);
     Player playerFound = retrievePlayerFromGame(playerId, gameId);
 
-    return gameCardRepository.findAllByGameDeckIdAndOwnerId(gameFound.getDeck().getId(), playerFound.getId());
+    return gameCardRepository.findAllByGameIdAndOwnerId(gameFound.getId(), playerFound.getId());
   }
 
   @Override

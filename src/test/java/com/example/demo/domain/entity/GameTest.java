@@ -12,18 +12,15 @@ class GameTest {
 
   @Test
   void mustBuildGameWithDeck() {
-    GameDeck gameDeck = new GameDeck();
-    Game game = new Game(gameDeck);
+    Game game = new Game();
 
-    Assertions.assertThat(game.getDeck()).isNotNull();
-    Assertions.assertThat(game.getDeck()).isEqualTo(gameDeck);
+    Assertions.assertThat(game).isNotNull();
   }
 
   @Test
   void mustBuildGameWithoutDeck() {
     Game game = new Game();
 
-    Assertions.assertThat(game.getDeck()).isNull();
     Assertions.assertThat(game.getCreatedAt()).isNotNull();
   }
 
@@ -31,29 +28,29 @@ class GameTest {
   void mustAddCardsToGameAndCalculatePosition() {
     Deck firstDeck = new Deck();
 
-    Game game = new Game(new GameDeck());
+    Game game = new Game();
     List<Card> firstDeckCards = List.of(
-        new Card(CardName.ACE, CardSuit.DIAMONDS, firstDeck),
-        new Card(CardName.TWO, CardSuit.CLUBS, firstDeck)
+        new Card(CardValue.ACE, CardSuit.DIAMONDS, firstDeck),
+        new Card(CardValue.TWO, CardSuit.CLUBS, firstDeck)
     );
     Deck secondDeck = new Deck();
     List<Card> secondDeckCards = List.of(
-      new Card(CardName.THREE, CardSuit.SPADES, secondDeck),
-      new Card(CardName.FOUR, CardSuit.HEARTS, secondDeck)
+      new Card(CardValue.THREE, CardSuit.SPADES, secondDeck),
+      new Card(CardValue.FOUR, CardSuit.HEARTS, secondDeck)
     );
 
 
     game.addCards(firstDeckCards);
     game.addCards(secondDeckCards);
 
-    List<GameCard> gameCards = game.getDeck().getCards();
+    List<GameCard> gameCards = game.getCards();
 
     Assertions.assertThat(gameCards).hasSize(4);
     Assertions.assertThat(gameCards).containsExactlyInAnyOrderElementsOf(List.of(
-      new GameCard(firstDeckCards.get(0), game.getDeck(), 1),
-      new GameCard(firstDeckCards.get(1), game.getDeck(), 2),
-      new GameCard(secondDeckCards.get(0), game.getDeck(), 3),
-      new GameCard(secondDeckCards.get(1), game.getDeck(), 4)
+      new GameCard(firstDeckCards.get(0), game, 1),
+      new GameCard(firstDeckCards.get(1), game, 2),
+      new GameCard(secondDeckCards.get(0), game, 3),
+      new GameCard(secondDeckCards.get(1), game, 4)
     ));
 
     Assertions.assertThat(gameCards.get(0).getPosition()).isEqualTo(1);
@@ -101,13 +98,12 @@ class GameTest {
 
   @Test
   void mustDealCardToPlayer() {
-    GameDeck gameDeck = new GameDeck();
-    Game game = new Game(gameDeck);
+    Game game = new Game();
     Player player = new Player("richard");
     game.addPlayer(player);
 
-    Card card = new Card(CardName.ACE, CardSuit.DIAMONDS, new Deck());
-    gameDeck.addCards(List.of(card));
+    Card card = new Card(CardValue.ACE, CardSuit.DIAMONDS, new Deck());
+    game.addCards(List.of(card));
 
     GameCard dealtCard = game.dealCard(player);
 
@@ -118,51 +114,48 @@ class GameTest {
 
   @Test
   void mustThrowExceptionWhileDealingCardWhenNoCardsLeft() {
-    GameDeck gameDeck = new GameDeck();
-    Game game = new Game(gameDeck);
+    Game game = new Game();
     Player player = new Player("richard");
     game.addPlayer(player);
 
     Assertions.assertThatThrownBy(() -> game.dealCard(player))
         .isInstanceOf(NoCardsLeftInGameDeckException.class)
-        .hasMessage("Game deck with ID null has no cards to deal");
+        .hasMessage("Game with ID null has no cards to deal");
   }
 
   @Test
   void mustThrowExceptionWhileDealingCardWhenAllCardsWereDealt() {
-    GameDeck gameDeck = new GameDeck();
-    Game game = new Game(gameDeck);
+    Game game = new Game();
     Player player = new Player("richard");
     game.addPlayer(player);
 
-    Card card = new Card(CardName.ACE, CardSuit.DIAMONDS, new Deck());
-    gameDeck.addCards(List.of(card));
+    Card card = new Card(CardValue.ACE, CardSuit.DIAMONDS, new Deck());
+    game.addCards(List.of(card));
     game.dealCard(player);
 
     Assertions.assertThatThrownBy(() -> game.dealCard(player))
         .isInstanceOf(NoCardsLeftInGameDeckException.class)
-        .hasMessage("Game deck with ID null has no cards to deal");
+        .hasMessage("Game with ID null has no cards to deal");
   }
 
   @Test
   void mustShuffleDeck() {
-    GameDeck gameDeck = new GameDeck();
-    Game game = new Game(gameDeck);
+    Game game = new Game();
     Player player = new Player("richard");
     game.addPlayer(player);
 
-    Card cardOne = new Card(CardName.ACE, CardSuit.DIAMONDS, new Deck());
-    Card cardTwo = new Card(CardName.TWO, CardSuit.CLUBS, new Deck());
-    Card cardThree = new Card(CardName.THREE, CardSuit.SPADES, new Deck());
-    Card cardFour = new Card(CardName.FOUR, CardSuit.HEARTS, new Deck());
-    Card cardFive = new Card(CardName.FIVE, CardSuit.HEARTS, new Deck());
-    gameDeck.addCards(List.of(cardOne, cardTwo, cardThree, cardFour, cardFive));
+    Card cardOne = new Card(CardValue.ACE, CardSuit.DIAMONDS, new Deck());
+    Card cardTwo = new Card(CardValue.TWO, CardSuit.CLUBS, new Deck());
+    Card cardThree = new Card(CardValue.THREE, CardSuit.SPADES, new Deck());
+    Card cardFour = new Card(CardValue.FOUR, CardSuit.HEARTS, new Deck());
+    Card cardFive = new Card(CardValue.FIVE, CardSuit.HEARTS, new Deck());
+    game.addCards(List.of(cardOne, cardTwo, cardThree, cardFour, cardFive));
 
-    List<GameCard> gameCardsBefore = game.getDeck().getCards();
+    List<GameCard> gameCardsBefore = game.getCards();
 
     game.shuffleDeck();
 
-    List<GameCard> gameCardsAfter = game.getDeck().getCards();
+    List<GameCard> gameCardsAfter = game.getCards();
 
     Assertions.assertThat(gameCardsBefore).doesNotContainSequence(gameCardsAfter);
   }

@@ -161,7 +161,7 @@ public class GameResource {
   @GetMapping(value = "/{gameId}/undealt-cards-summary", produces = "application/json")
   public ResponseEntity<UndealtCardSuitSummaryResponse> retrieveUndealtCards(@PathVariable Long gameId) {
     Game gameFound = gameService.retrieveGame(gameId);
-    UndealtCardSuitSummaryResponse cardsSummary = new UndealtCardSuitSummaryResponse(gameFound.getDeck().getUndealtCardsAmountBySuit());
+    UndealtCardSuitSummaryResponse cardsSummary = new UndealtCardSuitSummaryResponse(gameFound.getUndealtCardsAmountBySuit());
     return ResponseEntity.ok(cardsSummary);
   }
 
@@ -175,7 +175,7 @@ public class GameResource {
   @GetMapping(value = "/{gameId}/undealt-cards", produces = "application/json")
   public ResponseEntity<UndealtCardsSummaryResponse> retrieveRemainingCards(@PathVariable Long gameId) {
     Game gameFound = gameService.retrieveGame(gameId);
-    Map<GameCard, Integer> remainingCards = gameFound.getDeck().getUndealtCardsAmountByCardType();
+    Map<GameCard, Integer> remainingCards = gameFound.getUndealtCardsAmountByCardType();
     UndealtCardsSummaryResponse undealtCardsSummary = gameCardMapper.toUndealtCardsSummaryResponse(remainingCards);
 
     return ResponseEntity.ok(undealtCardsSummary);

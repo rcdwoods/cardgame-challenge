@@ -2,7 +2,7 @@ package com.example.demo.domain.entity;
 
 import com.example.demo.domain.exception.InvalidCardNumberException;
 
-public enum CardName {
+public enum CardValue {
   ACE(1),
   TWO(2),
   THREE(3),
@@ -19,14 +19,14 @@ public enum CardName {
 
   private final Integer number;
 
-  CardName(Integer number) {
+  CardValue(Integer number) {
     this.number = number;
   }
 
-  public static CardName fromNumber(Integer number) {
-    for (CardName cardName : CardName.values()) {
-      if (cardName.getNumber().equals(number)) {
-        return cardName;
+  public static CardValue fromNumber(Integer number) {
+    for (CardValue cardValue : CardValue.values()) {
+      if (cardValue.getNumber().equals(number)) {
+        return cardValue;
       }
     }
 

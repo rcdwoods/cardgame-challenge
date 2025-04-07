@@ -20,7 +20,7 @@ public class Player {
   @JoinColumn(name = "game_id", nullable = false)
   private Game game;
 
-  @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "owner")
   private final List<GameCard> gameCards = new ArrayList<>();
 
   @Column(name = "created_at")

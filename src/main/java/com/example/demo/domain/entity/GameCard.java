@@ -13,8 +13,8 @@ public class GameCard {
   @JoinColumn(name = "card_id", nullable = false)
   private Card card;
   @ManyToOne
-  @JoinColumn(name = "game_deck_id", nullable = false)
-  private GameDeck gameDeck;
+  @JoinColumn(name = "game_id", nullable = false)
+  private Game game;
   @ManyToOne
   @JoinColumn(name = "player_id")
   private Player owner;
@@ -23,22 +23,9 @@ public class GameCard {
   public GameCard() {
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    GameCard gameCard = (GameCard) o;
-    return Objects.equals(card, gameCard.card);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(card);
-  }
-
-  public GameCard(Card card, GameDeck gameDeck, Integer position) {
+  public GameCard(Card card, Game game, Integer position) {
+    this.game = game;
     this.card = card;
-    this.gameDeck = gameDeck;
     this.position = position;
   }
 
@@ -50,8 +37,8 @@ public class GameCard {
     return card;
   }
 
-  public GameDeck getGameDeck() {
-    return gameDeck;
+  public Game getGame() {
+    return game;
   }
 
   public Integer getPosition() {
@@ -75,6 +62,20 @@ public class GameCard {
   }
 
   public int getCardScore() {
-    return card.getName().getNumber();
+    return card.getValue().getNumber();
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    GameCard gameCard = (GameCard) o;
+    return Objects.equals(card, gameCard.card);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(card);
   }
 }

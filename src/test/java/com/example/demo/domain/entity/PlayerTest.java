@@ -18,9 +18,9 @@ class PlayerTest {
   @Test
   void mustGetPlayerGameScore() {
     Player player = new Player("Player 1");
-    GameCard cardOne = new GameCard(new Card(CardName.ACE, CardSuit.HEARTS, null), null, 1);
-    GameCard cardTwo = new GameCard(new Card(CardName.KING, CardSuit.SPADES, null), null, 2);
-    GameCard cardThree = new GameCard(new Card(CardName.QUEEN, CardSuit.DIAMONDS, null), null, 3);
+    GameCard cardOne = new GameCard(new Card(CardValue.ACE, CardSuit.HEARTS, null), null, 1);
+    GameCard cardTwo = new GameCard(new Card(CardValue.KING, CardSuit.SPADES, null), null, 2);
+    GameCard cardThree = new GameCard(new Card(CardValue.QUEEN, CardSuit.DIAMONDS, null), null, 3);
 
     player.addCard(cardOne);
     player.addCard(cardTwo);

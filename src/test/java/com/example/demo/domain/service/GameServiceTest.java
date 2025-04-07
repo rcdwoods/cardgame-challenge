@@ -24,8 +24,6 @@ import java.util.Optional;
 class GameServiceTest {
 
   @MockitoBean
-  private GameDeckRepository gameDeckRepository;
-  @MockitoBean
   private GameCardRepository gameCardRepository;
   @MockitoBean
   private PlayerRepository playerRepository;
@@ -41,7 +39,6 @@ class GameServiceTest {
 
   @Test
   void mustCreateGame() {
-    Mockito.when(gameDeckRepository.save(Mockito.any())).thenAnswer(params -> params.getArguments()[0]);
     Mockito.when(gameRepository.save(Mockito.any())).thenAnswer(params -> params.getArguments()[0]);
 
     Game startedGame = gameService.startNewGame();
@@ -70,26 +67,25 @@ class GameServiceTest {
 
   @Test
   void mustShuffleGameDeck() {
-    GameDeck gameDeck = new GameDeck();
-    Game game = new Game(gameDeck);
+    Game game = new Game();
     Player player = new Player("richard");
     game.addPlayer(player);
 
-    Card cardOne = new Card(CardName.ACE, CardSuit.DIAMONDS, new Deck());
-    Card cardTwo = new Card(CardName.TWO, CardSuit.CLUBS, new Deck());
-    Card cardThree = new Card(CardName.THREE, CardSuit.SPADES, new Deck());
-    Card cardFour = new Card(CardName.FOUR, CardSuit.HEARTS, new Deck());
-    Card cardFive = new Card(CardName.FIVE, CardSuit.HEARTS, new Deck());
-    gameDeck.addCards(List.of(cardOne, cardTwo, cardThree, cardFour, cardFive));
+    Card cardOne = new Card(CardValue.ACE, CardSuit.DIAMONDS, new Deck());
+    Card cardTwo = new Card(CardValue.TWO, CardSuit.CLUBS, new Deck());
+    Card cardThree = new Card(CardValue.THREE, CardSuit.SPADES, new Deck());
+    Card cardFour = new Card(CardValue.FOUR, CardSuit.HEARTS, new Deck());
+    Card cardFive = new Card(CardValue.FIVE, CardSuit.HEARTS, new Deck());
+    game.addCards(List.of(cardOne, cardTwo, cardThree, cardFour, cardFive));
 
-    List<GameCard> gameCardsBefore = game.getDeck().getCards();
+    List<GameCard> gameCardsBefore = game.getCards();
 
     Mockito.when(gameRepository.findById(1L)).thenReturn(java.util.Optional.of(game));
     Mockito.when(gameRepository.save(Mockito.any())).thenAnswer(params -> params.getArguments()[0]);
 
     gameService.shuffleGameDeck(1L);
 
-    List<GameCard> gameCardsAfter = game.getDeck().getCards();
+    List<GameCard> gameCardsAfter = game.getCards();
 
     Mockito.verify(gameRepository, Mockito.times(1)).save(game);
 
@@ -98,7 +94,7 @@ class GameServiceTest {
 
   @Test
   void mustAddDeckToGameWhenBothExists() {
-    Game game = new Game(new GameDeck());
+    Game game = new Game();
 
     Mockito.when(deckRepository.save(Mockito.any())).thenAnswer(params -> params.getArguments()[0]);
 
@@ -112,7 +108,7 @@ class GameServiceTest {
 
     Mockito.verify(gameRepository, Mockito.times(1)).save(game);
 
-    Assertions.assertThat(game.getDeck().getCards()).hasSize(52);
+    Assertions.assertThat(game.getCards()).hasSize(52);
   }
 
   @Test
@@ -126,7 +122,7 @@ class GameServiceTest {
 
   @Test
   void mustThrowExceptionWhenAddingDeckThatDoesNotExists() {
-    Game game = new Game(new GameDeck());
+    Game game = new Game();
 
     Mockito.when(gameRepository.findById(1L)).thenReturn(java.util.Optional.of(game));
     Mockito.when(deckRepository.findById(1L)).thenReturn(Optional.empty());
@@ -138,7 +134,7 @@ class GameServiceTest {
 
   @Test
   void mustThrowExceptionWhenAddingDeckThatIsAlreadyInUse() {
-    Game game = new Game(new GameDeck());
+    Game game = new Game();
     Deck deck = new Deck();
 
     Mockito.when(gameRepository.findById(1L)).thenReturn(java.util.Optional.of(game));
@@ -152,17 +148,17 @@ class GameServiceTest {
 
   @Test
   void mustRetrievePlayerGameCards() {
-    Game game = new Game(new GameDeck());
+    Game game = new Game();
     Player player = new Player("richard");
-    player.addCard(new GameCard(new Card(CardName.ACE, CardSuit.DIAMONDS, new Deck()), game.getDeck(), 1));
-    player.addCard(new GameCard(new Card(CardName.TWO, CardSuit.CLUBS, new Deck()), game.getDeck(), 2));
+    player.addCard(new GameCard(new Card(CardValue.ACE, CardSuit.DIAMONDS, new Deck()), game, 1));
+    player.addCard(new GameCard(new Card(CardValue.TWO, CardSuit.CLUBS, new Deck()), game, 2));
 
     Mockito.when(gameRepository.findById(1L)).thenReturn(java.util.Optional.of(game));
     Mockito.when(playerRepository.findByIdAndGameId(5L, 1L)).thenReturn(java.util.Optional.of(player));
-    Mockito.when(gameCardRepository.findAllByGameDeckIdAndOwnerId(game.getDeck().getId(), player.getId()))
+    Mockito.when(gameCardRepository.findAllByGameIdAndOwnerId(game.getId(), player.getId()))
       .thenReturn(List.of(
-        new GameCard(new Card(CardName.ACE, CardSuit.DIAMONDS, new Deck()), game.getDeck(), 1),
-        new GameCard(new Card(CardName.TWO, CardSuit.CLUBS, new Deck()), game.getDeck(), 2)
+        new GameCard(new Card(CardValue.ACE, CardSuit.DIAMONDS, new Deck()), game, 1),
+        new GameCard(new Card(CardValue.TWO, CardSuit.CLUBS, new Deck()), game, 2)
       ));
 
     List<GameCard> playerGameCards = gameService.retrievePlayerGameCards(1L, 5L);
@@ -172,9 +168,9 @@ class GameServiceTest {
 
   @Test
   void mustDealCardToPlayer() {
-    Game game = new Game(new GameDeck());
+    Game game = new Game();
     Player player = new Player("richard");
-    game.addCards(List.of(new Card(CardName.ACE, CardSuit.DIAMONDS, new Deck())));
+    game.addCards(List.of(new Card(CardValue.ACE, CardSuit.DIAMONDS, new Deck())));
 
     Mockito.when(gameRepository.findById(1L)).thenReturn(java.util.Optional.of(game));
     Mockito.when(playerRepository.findByIdAndGameId(5L, 1L)).thenReturn(java.util.Optional.of(player));
@@ -184,6 +180,6 @@ class GameServiceTest {
 
     Assertions.assertThat(dealtCard).isNotNull();
     Assertions.assertThat(dealtCard.getOwner()).isEqualTo(player);
-    Assertions.assertThat(game.getDeck().getCards()).doesNotContain(dealtCard);
+    Assertions.assertThat(game.getCards()).doesNotContain(dealtCard);
   }
 }

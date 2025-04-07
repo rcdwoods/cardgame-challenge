@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public class UndealtCardsSummaryResponse {
-  @JsonProperty("cards_amount")
-  public int cardsAmount;
+  @JsonProperty("undealt_card_amount")
+  public int undealtCardsAmount;
   public List<UndealtCardResponse> cards;
 }

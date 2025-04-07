@@ -26,7 +26,7 @@ public class DeckResource {
     description = "Creates a new deck and returns its details. This deck can be attached to a game after creation."
   )
   @ApiResponse(responseCode = "200", description = "Deck created successfully")
-  @PostMapping(produces = "application/json", consumes = "application/json")
+  @PostMapping(produces = "application/json")
   public ResponseEntity<DeckResponse> createDeck() {
     Deck createdDeck = deckService.createDeck();
     return ResponseEntity.ok(deckMapper.toResponse(createdDeck));

@@ -1,6 +1,6 @@
 package com.example.demo.infrastructure.resource;
 
-import com.example.demo.domain.entity.CardName;
+import com.example.demo.domain.entity.CardValue;
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.Assertions;
@@ -41,8 +41,7 @@ class GameResourceTest {
         "id", Matchers.notNullValue(),
         "created_at", Matchers.startsWith(date),
         "players", Matchers.hasSize(0),
-        "deck", Matchers.notNullValue(),
-        "deck.cards", Matchers.hasSize(0)
+        "cards", Matchers.hasSize(0)
       );
   }
 
@@ -243,10 +242,10 @@ class GameResourceTest {
       .then()
       .statusCode(HttpStatus.OK.value())
       .body(
-        "cards_amount", Matchers.equalTo(1),
+        "card_amount", Matchers.equalTo(1),
         "cards", Matchers.hasSize(1),
         "cards[0].id", Matchers.equalTo(dealtCardId),
-        "cards[0].name", Matchers.notNullValue(),
+        "cards[0].value", Matchers.notNullValue(),
         "cards[0].suit", Matchers.notNullValue()
       );
   }
@@ -387,7 +386,7 @@ class GameResourceTest {
       .statusCode(HttpStatus.OK.value())
       .body(
         "id", Matchers.notNullValue(),
-        "name", Matchers.notNullValue(),
+        "value", Matchers.notNullValue(),
         "suit", Matchers.notNullValue()
       );
 
@@ -452,9 +451,9 @@ class GameResourceTest {
       .then()
       .statusCode(HttpStatus.OK.value())
       .body(
-        "cards_amount", Matchers.equalTo(52),
+        "undealt_card_amount", Matchers.equalTo(52),
         "cards", Matchers.hasSize(52),
-        "cards[0].name", Matchers.notNullValue(),
+        "cards[0].value", Matchers.notNullValue(),
         "cards[0].suit", Matchers.notNullValue(),
         "cards[0].count", Matchers.equalTo(1)
       );
@@ -518,8 +517,8 @@ class GameResourceTest {
       .then()
       .statusCode(HttpStatus.OK.value());
 
-    String dealtCardSuit = cardDealtResponse.extract().response().path("name");
-    CardName name = CardName.valueOf(dealtCardSuit.toUpperCase());
+    String dealtCardSuit = cardDealtResponse.extract().response().path("value");
+    CardValue value = CardValue.valueOf(dealtCardSuit.toUpperCase());
 
     RestAssured.given()
       .contentType("application/json")
@@ -531,7 +530,7 @@ class GameResourceTest {
         "player_amount", Matchers.equalTo(2),
         "player_scores", Matchers.hasSize(2),
         "player_scores[0].name", Matchers.notNullValue(),
-        "player_scores[0].score", Matchers.equalTo(name.getNumber()),
+        "player_scores[0].score", Matchers.equalTo(value.getNumber()),
         "player_scores[1].name", Matchers.notNullValue(),
         "player_scores[1].score", Matchers.equalTo(0)
       );

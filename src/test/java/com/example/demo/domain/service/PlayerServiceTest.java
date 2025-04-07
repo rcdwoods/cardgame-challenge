@@ -22,8 +22,6 @@ class PlayerServiceTest {
   @MockitoBean
   private PlayerRepository playerRepository;
   @MockitoBean
-  private GameDeckRepository gameDeckRepository;
-  @MockitoBean
   private GameCardRepository gameCardRepository;
   @MockitoBean
   private GameRepository gameRepository;

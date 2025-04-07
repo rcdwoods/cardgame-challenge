@@ -152,7 +152,7 @@ class GameResourceTest {
       .then()
       .statusCode(HttpStatus.BAD_REQUEST.value());
 
-    String errorMessage = playerCardsResponse.extract().response().path("userMessage");
+    String errorMessage = playerCardsResponse.extract().response().path("message");
 
     Assertions.assertThat(errorMessage).isEqualTo(String.format("Player with ID %s is not in the game.", createdPlayerId));
   }

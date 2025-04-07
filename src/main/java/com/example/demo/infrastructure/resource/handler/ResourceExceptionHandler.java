@@ -34,8 +34,8 @@ public class ResourceExceptionHandler extends ResponseEntityExceptionHandler {
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		String detail = ex.getMessage();
 
-		Problem problem = createProblem(status, detail)
-			.withUserMessage(detail)
+		Problem problem = new Problem().withStatus(status.value())
+			.withMessage(detail)
 			.withCode(ex.getCode());
 
 		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
@@ -48,8 +48,8 @@ public class ResourceExceptionHandler extends ResponseEntityExceptionHandler {
 		HttpStatus status = HttpStatus.NOT_FOUND;
 		String detail = ex.getMessage();
 
-		Problem problem = createProblem(status, detail).
-			withUserMessage(detail).
+		Problem problem = new Problem().withStatus(status.value()).
+			withMessage(detail).
 			withCode(ex.getCode());
 
 		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
@@ -74,21 +74,15 @@ public class ResourceExceptionHandler extends ResponseEntityExceptionHandler {
 			body = new Problem()
 				.withTitle(HttpStatus.resolve(status.value()).getReasonPhrase())
 				.withStatus(status.value())
-				.withUserMessage(GENERIC_MESSAGE_ERROR);
+				.withMessage(GENERIC_MESSAGE_ERROR);
 		} else if (body instanceof String) {
 			body = new Problem()
 				.withTitle((String) body)
 				.withStatus(status.value())
-				.withUserMessage(GENERIC_MESSAGE_ERROR);
+				.withMessage(GENERIC_MESSAGE_ERROR);
 		}
 
 		return super.handleExceptionInternal(ex, body, headers, status, request);
-	}
-
-	private Problem createProblem(HttpStatusCode status, String detail) {
-		return new Problem()
-			.withStatus(status.value())
-			.withDetail(detail);
 	}
 
 	private ResponseEntity<Object> handleValidationInternal(Exception ex, BindingResult bindingResult, HttpHeaders headers,
@@ -109,8 +103,8 @@ public class ResourceExceptionHandler extends ResponseEntityExceptionHandler {
 				return new Problem.Object(name, message);
 			}).toList();
 
-		Problem problem = createProblem(status, detail)
-			.withUserMessage(detail)
+		Problem problem = new Problem().withStatus(status.value())
+			.withMessage(detail)
 			.withObjects(problemObjects)
 			.withCode("INVALID_DATA");
 

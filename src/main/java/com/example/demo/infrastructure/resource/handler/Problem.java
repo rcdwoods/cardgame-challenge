@@ -11,8 +11,7 @@ public class Problem {
   private Integer status;
   private String type;
   private String title;
-  private String detail;
-  private String userMessage;
+  private String message;
   private String code;
   private List<Object> objects;
   private final OffsetDateTime timestamp;
@@ -33,12 +32,8 @@ public class Problem {
     return title;
   }
 
-  public String getDetail() {
-    return detail;
-  }
-
-  public String getUserMessage() {
-    return userMessage;
+  public String getMessage() {
+    return message;
   }
 
   public String getCode() {
@@ -64,13 +59,8 @@ public class Problem {
     return this;
   }
 
-  public Problem withDetail(String detail) {
-    this.detail = detail;
-    return this;
-  }
-
-  public Problem withUserMessage(String userMessage) {
-    this.userMessage = userMessage;
+  public Problem withMessage(String message) {
+    this.message = message;
     return this;
   }
 
@@ -86,19 +76,19 @@ public class Problem {
 
   public static class Object {
     private final String name;
-    private final String userMessage;
+    private final String message;
 
-    public Object(String name, String userMessage) {
+    public Object(String name, String message) {
       this.name = name;
-      this.userMessage = userMessage;
+      this.message = message;
     }
 
     public String getName() {
       return name;
     }
 
-    public String getUserMessage() {
-      return userMessage;
+    public String getMessage() {
+      return message;
     }
   }
 

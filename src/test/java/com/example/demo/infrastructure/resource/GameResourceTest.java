@@ -4,6 +4,7 @@ import com.example.demo.domain.entity.CardName;
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -21,11 +22,16 @@ class GameResourceTest {
   @LocalServerPort
   private int testingPort;
 
+  @BeforeEach
+  void setUp() {
+    RestAssured.port = testingPort;
+  }
+
   @Test
   void mustStartGame() {
     String date = LocalDate.now().toString();
 
-    RestAssured.given().port(testingPort)
+    RestAssured.given()
       .when()
       .post("/v1/games")
       .then()
@@ -41,7 +47,8 @@ class GameResourceTest {
 
   @Test
   void mustDeleteGame() {
-    ValidatableResponse creationResponse = RestAssured.given().port(testingPort)
+    ValidatableResponse creationResponse = RestAssured.given()
+      .contentType("application/json")
       .when()
       .post("/v1/games")
       .then()
@@ -49,7 +56,8 @@ class GameResourceTest {
 
     Integer createdGameId = creationResponse.extract().response().path("id");
 
-    RestAssured.given().port(testingPort)
+    RestAssured.given()
+      .contentType("application/json")
       .when()
       .delete(String.format("/v1/games/%s", createdGameId))
       .then()
@@ -58,7 +66,8 @@ class GameResourceTest {
 
   @Test
   void mustAddDeckToGame() {
-    ValidatableResponse gameCreationResponse = RestAssured.given().port(testingPort)
+    ValidatableResponse gameCreationResponse = RestAssured.given()
+      .contentType("application/json")
       .when()
       .post("/v1/games")
       .then()
@@ -66,7 +75,8 @@ class GameResourceTest {
 
     Integer createdGameId = gameCreationResponse.extract().response().path("id");
 
-    ValidatableResponse deckCreationResponse = RestAssured.given().port(testingPort)
+    ValidatableResponse deckCreationResponse = RestAssured.given()
+      .contentType("application/json")
       .when()
       .post("/v1/decks")
       .then()
@@ -74,7 +84,8 @@ class GameResourceTest {
 
     Integer createdDeckId = deckCreationResponse.extract().response().path("id");
 
-    RestAssured.given().port(testingPort)
+    RestAssured.given()
+      .contentType("application/json")
       .when()
       .post(String.format("/v1/games/%s/decks/%s", createdGameId, createdDeckId))
       .then()
@@ -83,7 +94,8 @@ class GameResourceTest {
 
   @Test
   void mustAddPlayerToGame() {
-    ValidatableResponse gameCreationResponse = RestAssured.given().port(testingPort)
+    ValidatableResponse gameCreationResponse = RestAssured.given()
+      .contentType("application/json")
       .when()
       .post("/v1/games")
       .then()
@@ -93,7 +105,7 @@ class GameResourceTest {
 
     String playerRequest = "{\"name\" : \"richard\"}";
 
-    RestAssured.given().port(testingPort)
+    RestAssured.given()
       .body(playerRequest)
       .contentType("application/json")
       .when()
@@ -104,7 +116,7 @@ class GameResourceTest {
 
   @Test
   void mustGetPlayerGameCardsWhenItIsEmpty() {
-    ValidatableResponse gameCreationResponse = RestAssured.given().port(testingPort)
+    ValidatableResponse gameCreationResponse = RestAssured.given()
       .when()
       .contentType("application/json")
       .post("/v1/games")
@@ -115,7 +127,7 @@ class GameResourceTest {
 
     String playerRequest = "{\"name\" : \"richard\"}";
 
-    ValidatableResponse playerCreationResponse = RestAssured.given().port(testingPort)
+    ValidatableResponse playerCreationResponse = RestAssured.given()
       .body(playerRequest)
       .contentType("application/json")
       .when()
@@ -125,7 +137,7 @@ class GameResourceTest {
 
     Integer createdPlayerId = playerCreationResponse.extract().response().path("id");
 
-    RestAssured.given().port(testingPort)
+    RestAssured.given()
       .when()
       .contentType("application/json")
       .get(String.format("/v1/games/%s/players/%s/cards", createdGameId, createdPlayerId))
@@ -135,7 +147,7 @@ class GameResourceTest {
 
   @Test
   void mustGetPlayerGameCardsAfterDealingIt() {
-    ValidatableResponse gameCreationResponse = RestAssured.given().port(testingPort)
+    ValidatableResponse gameCreationResponse = RestAssured.given()
       .when()
       .contentType("application/json")
       .post("/v1/games")
@@ -146,7 +158,7 @@ class GameResourceTest {
 
     String playerRequest = "{\"name\" : \"richard\"}";
 
-    ValidatableResponse playerCreationResponse = RestAssured.given().port(testingPort)
+    ValidatableResponse playerCreationResponse = RestAssured.given()
       .body(playerRequest)
       .contentType("application/json")
       .when()
@@ -156,7 +168,8 @@ class GameResourceTest {
 
     Integer createdPlayerId = playerCreationResponse.extract().response().path("id");
 
-    ValidatableResponse deckCreationResponse = RestAssured.given().port(testingPort)
+    ValidatableResponse deckCreationResponse = RestAssured.given()
+      .contentType("application/json")
       .when()
       .post("/v1/decks")
       .then()
@@ -164,24 +177,25 @@ class GameResourceTest {
 
     Integer createdDeckId = deckCreationResponse.extract().response().path("id");
 
-    RestAssured.given().port(testingPort)
+    RestAssured.given()
+      .contentType("application/json")
       .when()
       .post(String.format("/v1/games/%s/decks/%s", createdGameId, createdDeckId))
       .then()
       .statusCode(HttpStatus.NO_CONTENT.value());
 
-    ValidatableResponse cardDealtResponse = RestAssured.given().port(testingPort)
-      .when()
+    ValidatableResponse cardDealtResponse = RestAssured.given()
       .contentType("application/json")
+      .when()
       .post(String.format("/v1/games/%s/players/%s/cards-dealing", createdGameId, createdPlayerId))
       .then()
       .statusCode(HttpStatus.OK.value());
 
     Integer dealtCardId = cardDealtResponse.extract().response().path("id");
 
-    RestAssured.given().port(testingPort)
-      .when()
+    RestAssured.given()
       .contentType("application/json")
+      .when()
       .get(String.format("/v1/games/%s/players/%s/cards", createdGameId, createdPlayerId))
       .then()
       .statusCode(HttpStatus.OK.value())
@@ -196,7 +210,7 @@ class GameResourceTest {
 
   @Test
   void mustShuffleGameDeck() {
-    ValidatableResponse gameCreationResponse = RestAssured.given().port(testingPort)
+    ValidatableResponse gameCreationResponse = RestAssured.given()
       .when()
       .contentType("application/json")
       .post("/v1/games")
@@ -205,7 +219,8 @@ class GameResourceTest {
 
     Integer createdGameId = gameCreationResponse.extract().response().path("id");
 
-    ValidatableResponse deckCreationResponse = RestAssured.given().port(testingPort)
+    ValidatableResponse deckCreationResponse = RestAssured.given()
+      .contentType("application/json")
       .when()
       .post("/v1/decks")
       .then()
@@ -213,15 +228,16 @@ class GameResourceTest {
 
     Integer createdDeckId = deckCreationResponse.extract().response().path("id");
 
-    RestAssured.given().port(testingPort)
+    RestAssured.given()
+      .contentType("application/json")
       .when()
       .post(String.format("/v1/games/%s/decks/%s", createdGameId, createdDeckId))
       .then()
       .statusCode(HttpStatus.NO_CONTENT.value());
 
-    RestAssured.given().port(testingPort)
-      .when()
+    RestAssured.given()
       .contentType("application/json")
+      .when()
       .post(String.format("/v1/games/%s/shuffle", createdGameId))
       .then()
       .statusCode(HttpStatus.NO_CONTENT.value());
@@ -229,16 +245,17 @@ class GameResourceTest {
 
   @Test
   void mustRetrieveUndealtCardsSummaryWithAmountOfRemainingCardsBySuit() {
-    ValidatableResponse gameCreationResponse = RestAssured.given().port(testingPort)
-      .when()
+    ValidatableResponse gameCreationResponse = RestAssured.given()
       .contentType("application/json")
+      .when()
       .post("/v1/games")
       .then()
       .statusCode(HttpStatus.OK.value());
 
     Integer createdGameId = gameCreationResponse.extract().response().path("id");
 
-    ValidatableResponse deckCreationResponse = RestAssured.given().port(testingPort)
+    ValidatableResponse deckCreationResponse = RestAssured.given()
+      .contentType("application/json")
       .when()
       .post("/v1/decks")
       .then()
@@ -246,15 +263,16 @@ class GameResourceTest {
 
     Integer createdDeckId = deckCreationResponse.extract().response().path("id");
 
-    RestAssured.given().port(testingPort)
+    RestAssured.given()
+      .contentType("application/json")
       .when()
       .post(String.format("/v1/games/%s/decks/%s", createdGameId, createdDeckId))
       .then()
       .statusCode(HttpStatus.NO_CONTENT.value());
 
-    RestAssured.given().port(testingPort)
-      .when()
+    RestAssured.given()
       .contentType("application/json")
+      .when()
       .get(String.format("/v1/games/%s/undealt-cards-summary", createdGameId))
       .then()
       .statusCode(HttpStatus.OK.value())
@@ -268,16 +286,17 @@ class GameResourceTest {
 
   @Test
   void mustUpdateUndealtCardsSummaryAfterDealingCard() {
-    ValidatableResponse gameCreationResponse = RestAssured.given().port(testingPort)
-      .when()
+    ValidatableResponse gameCreationResponse = RestAssured.given()
       .contentType("application/json")
+      .when()
       .post("/v1/games")
       .then()
       .statusCode(HttpStatus.OK.value());
 
     Integer createdGameId = gameCreationResponse.extract().response().path("id");
 
-    ValidatableResponse deckCreationResponse = RestAssured.given().port(testingPort)
+    ValidatableResponse deckCreationResponse = RestAssured.given()
+      .contentType("application/json")
       .when()
       .post("/v1/decks")
       .then()
@@ -285,15 +304,16 @@ class GameResourceTest {
 
     Integer createdDeckId = deckCreationResponse.extract().response().path("id");
 
-    RestAssured.given().port(testingPort)
+    RestAssured.given()
+      .contentType("application/json")
       .when()
       .post(String.format("/v1/games/%s/decks/%s", createdGameId, createdDeckId))
       .then()
       .statusCode(HttpStatus.NO_CONTENT.value());
 
-    RestAssured.given().port(testingPort)
-      .when()
+    RestAssured.given()
       .contentType("application/json")
+      .when()
       .get(String.format("/v1/games/%s/undealt-cards-summary", createdGameId))
       .then()
       .statusCode(HttpStatus.OK.value())
@@ -306,9 +326,9 @@ class GameResourceTest {
 
     String playerRequest = "{\"name\" : \"richard\"}";
 
-    ValidatableResponse playerCreationResponse = RestAssured.given().port(testingPort)
-      .body(playerRequest)
+    ValidatableResponse playerCreationResponse = RestAssured.given()
       .contentType("application/json")
+      .body(playerRequest)
       .when()
       .post(String.format("/v1/games/%s/players", createdGameId))
       .then()
@@ -316,9 +336,9 @@ class GameResourceTest {
 
     Integer createdPlayerId = playerCreationResponse.extract().response().path("id");
 
-    ValidatableResponse cardDealtResponse = RestAssured.given().port(testingPort)
-      .when()
+    ValidatableResponse cardDealtResponse = RestAssured.given()
       .contentType("application/json")
+      .when()
       .post(String.format("/v1/games/%s/players/%s/cards-dealing", createdGameId, createdPlayerId))
       .then()
       .statusCode(HttpStatus.OK.value())
@@ -341,9 +361,9 @@ class GameResourceTest {
 
     undealtCardsSummary.put(dealtCardSuit.toLowerCase(), undealtCardsSummary.get(dealtCardSuit.toLowerCase()) - 1);
 
-    RestAssured.given().port(testingPort)
-      .when()
+    RestAssured.given()
       .contentType("application/json")
+      .when()
       .get(String.format("/v1/games/%s/undealt-cards-summary", createdGameId))
       .then()
       .statusCode(HttpStatus.OK.value())
@@ -357,16 +377,17 @@ class GameResourceTest {
 
   @Test
   void mustRetrieveUndealtCards() {
-    ValidatableResponse gameCreationResponse = RestAssured.given().port(testingPort)
-      .when()
+    ValidatableResponse gameCreationResponse = RestAssured.given()
       .contentType("application/json")
+      .when()
       .post("/v1/games")
       .then()
       .statusCode(HttpStatus.OK.value());
 
     Integer createdGameId = gameCreationResponse.extract().response().path("id");
 
-    ValidatableResponse deckCreationResponse = RestAssured.given().port(testingPort)
+    ValidatableResponse deckCreationResponse = RestAssured.given()
+      .contentType("application/json")
       .when()
       .post("/v1/decks")
       .then()
@@ -374,15 +395,16 @@ class GameResourceTest {
 
     Integer createdDeckId = deckCreationResponse.extract().response().path("id");
 
-    RestAssured.given().port(testingPort)
+    RestAssured.given()
+      .contentType("application/json")
       .when()
       .post(String.format("/v1/games/%s/decks/%s", createdGameId, createdDeckId))
       .then()
       .statusCode(HttpStatus.NO_CONTENT.value());
 
-    RestAssured.given().port(testingPort)
-      .when()
+    RestAssured.given()
       .contentType("application/json")
+      .when()
       .get(String.format("/v1/games/%s/undealt-cards", createdGameId))
       .then()
       .statusCode(HttpStatus.OK.value())
@@ -397,9 +419,9 @@ class GameResourceTest {
 
   @Test
   void mustRetrieveGameScoresWithMultiplePlayers() {
-    ValidatableResponse gameCreationResponse = RestAssured.given().port(testingPort)
-      .when()
+    ValidatableResponse gameCreationResponse = RestAssured.given()
       .contentType("application/json")
+      .when()
       .post("/v1/games")
       .then()
       .statusCode(HttpStatus.OK.value());
@@ -408,7 +430,8 @@ class GameResourceTest {
 
     String playerRequest = "{\"name\" : \"richard\"}";
 
-    ValidatableResponse deckCreationResponse = RestAssured.given().port(testingPort)
+    ValidatableResponse deckCreationResponse = RestAssured.given()
+      .contentType("application/json")
       .when()
       .post("/v1/decks")
       .then()
@@ -416,15 +439,16 @@ class GameResourceTest {
 
     Integer createdDeckId = deckCreationResponse.extract().response().path("id");
 
-    RestAssured.given().port(testingPort)
+    RestAssured.given()
+      .contentType("application/json")
       .when()
       .post(String.format("/v1/games/%s/decks/%s", createdGameId, createdDeckId))
       .then()
       .statusCode(HttpStatus.NO_CONTENT.value());
 
-    ValidatableResponse playerCreationResponse = RestAssured.given().port(testingPort)
-      .body(playerRequest)
+    ValidatableResponse playerCreationResponse = RestAssured.given()
       .contentType("application/json")
+      .body(playerRequest)
       .when()
       .post(String.format("/v1/games/%s/players", createdGameId))
       .then()
@@ -432,11 +456,11 @@ class GameResourceTest {
 
     Integer createdPlayerId = playerCreationResponse.extract().response().path("id");
 
-    String player2Request = "{\"name\" : \"john\"}";
+    String playerTwoRequest = "{\"name\" : \"john\"}";
 
-    ValidatableResponse playerTwoCreationResponse = RestAssured.given().port(testingPort)
-      .body(player2Request)
+    ValidatableResponse playerTwoCreationResponse = RestAssured.given()
       .contentType("application/json")
+      .body(playerTwoRequest)
       .when()
       .post(String.format("/v1/games/%s/players", createdGameId))
       .then()
@@ -444,9 +468,9 @@ class GameResourceTest {
 
     playerTwoCreationResponse.extract().response().path("id");
 
-    ValidatableResponse cardDealtResponse = RestAssured.given().port(testingPort)
-      .when()
+    ValidatableResponse cardDealtResponse = RestAssured.given()
       .contentType("application/json")
+      .when()
       .post(String.format("/v1/games/%s/players/%s/cards-dealing", createdGameId, createdPlayerId))
       .then()
       .statusCode(HttpStatus.OK.value());
@@ -454,9 +478,9 @@ class GameResourceTest {
     String dealtCardSuit = cardDealtResponse.extract().response().path("name");
     CardName name = CardName.valueOf(dealtCardSuit.toUpperCase());
 
-    RestAssured.given().port(testingPort)
-      .when()
+    RestAssured.given()
       .contentType("application/json")
+      .when()
       .get(String.format("/v1/games/%s/scores", createdGameId))
       .then()
       .statusCode(HttpStatus.OK.value())
